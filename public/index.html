@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang = "en">
+<head>
+	<meta charset = "UTF-8">
+	
+	<title>Student Management Application</title>
+</head>
+<body>
+	<header>
+		<H1>Student Management Application</H1>
+	</header>
+	<!-- The <form> element is a container for different types of input elements, such as: text fields, checkboxes, radio buttons, submit buttons, etc. -->
+		<!-- this form has a view class and action to be performed by method of "POST" -->
+	<form class="view" action="/view" method="POST"> 
+		<!-- The <fieldset> HTML element is used to group several controls as well as labels ( <label> ) within a web form. -->
+		<fieldset> 
+				<h3>View All Students</h3>
+				<!-- The <button> tag defines a clickable button. Inside a <button> element you can put text (and tags like <i> , <b> , <strong> , <br> , <img> , etc.). -->
+				<button type ="submit">View</button>
+		</fieldset>
+	</form>
+	<form class="insert" id="insert" action="/insert" method="POST" >
+		<fieldset>
+				<h3>Insert New Student</h3>
+				<!-- The <label> element is used to associate a text label with a form <input> field. The label is used to tell users the value that should be entered in the associated input field. -->
+				<label>First Name</label>
+				<input type ="text" id = "first_name" name="first_name" placeholder="John" required>
+				<!-- two line breaks -->
+				<br><br>
+
+				<label>Last Name</label>
+				<input type="text" id = "last_name" name="last_name" placeholder="Doe" required>
+				<br><br>
+
+				<button type ="reset">Reset</button>
+				<button type ="submit">Submit</button>
+		</fieldset>
+	</form>
+	<form class="select" action="/select" method="POST">
+		<fieldset>
+				<h3>View A Specific Student</h3>
+				<label>First Name</label>
+				<input type ="text" id = "first_name" name="first_name" placeholder="John" required>
+				<br><br>
+
+				<label>Last Name</label>
+				<input type="text" id = "last_name" name="last_name" placeholder="Doe" required>
+				<br><br>
+				<button type ="reset">Reset</button>
+				<button type ="submit">Submit</button>
+				<br><br><br>
+		</fieldset>
+	</form>
+	<form class="update" action="/update" method="POST">
+		<fieldset>
+				<h3>Update A Students Record By ID</h3>
+				<label>Student ID</label>
+				<input size= "30" type ="text" id = "user_ID" name="user_ID" placeholder="1,2,3..." required>
+				<br><br>
+
+				<label>First Name</label>
+				<input size= "30" type="text" id = "first_name" name="first_name" placeholder="First Name" >
+				<br><br>
+
+				<label>Last Name</label>
+				<input size= "30" type="text" id = "last_name" name="last_name" placeholder="Last Name" >
+				<br><br>
+
+				<label>Email</label>
+				<input size= "30" type="text" id = "email" name="email" placeholder="Email@something.com" >
+				<br><br>
+
+				<label>Age</label>
+				<input size= "30" type="text" id = "age" name="age" placeholder="Age - between 0 and 200" >
+				<br><br>
+
+				<label>Other Contact Details</label>
+				<input size= "150" type="text" id = "contact_details" name="contact_details" 
+				placeholder="{ Phone: 123 456 7899 | Cell: 123 456 7899 | Email2: Email2@something.com | Address: 123 anyplace st, city, state, country, zip }" >
+				<br><br>
+				
+				<button type ="reset">Reset</button>
+				<button type ="submit">Submit</button>
+		</fieldset>
+	</form>
+	<form class="delete" action="/delete" method="POST">
+		<fieldset>
+				<h3>Delete A Student By Their ID</h3>
+				<label>Student ID</label>
+				<input type ="text" id = "user_ID" name="user_ID" placeholder="1,2,3..." required>
+				<br><br>
+
+				<button type ="reset">Reset</button>
+				<button type ="submit">Submit</button>
+				<br><br><br>
+		</fieldset>
+	</form>
+	<form action="/close" method="POST">
+		<fieldset>
+				<h3>Close Database Connection</h3>				
+				<button type ="submit">Close DB Connection</button>
+		</fieldset>
+	</form>
+	<footer>
+		<hr>
+		<h4>Please enter 'http://localhost:3000/close' to close the database connection before closing this window</h4>
+	</footer>
+</body>
+</html>
