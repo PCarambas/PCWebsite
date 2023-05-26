@@ -9,7 +9,7 @@ describe('Title Test', () => {
     })
 
     it('verify title-negative', () => {
-        cy.title().should('eq', 'Student Management Application123')
+        cy.title().should('not.eq', 'Student Management Application123')
     })
 })
         

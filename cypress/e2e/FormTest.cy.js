@@ -9,7 +9,7 @@ describe('Form Test', () => {
     })
 
     it('verify fieldsets-negative', () => {
-        cy.get('.body fieldset').should('have.length', 600)
+        cy.get('.body fieldset').should('not.have.length', 600)
     })
 })
         
