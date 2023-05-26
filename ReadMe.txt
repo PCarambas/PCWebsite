@@ -30,6 +30,7 @@ make the appropriate selections for your system.
 
 PostgreSQL - Download Link for windows - https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
 Install instructions for Graphical Installer: https://www.2ndquadrant.com/en/blog/pginstaller-install-postgresql/
+When following the graphical window, install the default selections except for stack builder, which is not needed.
 Make sure to use the following values during install:
     host: "localhost",
     user: "postgres",
@@ -37,18 +38,34 @@ Make sure to use the following values during install:
     password: "PCWebsite",
     database: "testdb"  
 
+After successful install of PostgreSQL. Open your programs list. 
+Navigate to PostgreSQL 15 > pgAdmin 4 > When prompted for password enter PCWebsite 
+Select drop down arrow on servers. When prompted for passwords again enter PCWebsite.
+Select drop down arrow on databases. Select drop down on testdb. 
+Select drop down on schemas. Select drop down on tables. 
+Select students table. Right click students table. Select query tool.
+Go back to Visual Studio Code. Go into project folder PCWebsite then into PostgreSQL_Scripts folder.
+Open Create_Script_Students_Table.sql. ctrl-a to select all and ctrl-c to copy.
+Go back to pg Admin 4 window. ctrl-v to paste into the query window. Press F5 to execute. 
+You should see something similar to the following: 
+    
+    ALTER/CREATE TABLE
+
+    Query returned successfully in 1 secs 171 msec.
+
+
 Cypress - Download Link for windows - https://docs.cypress.io/guides/getting-started/installing-cypress
 and follow the websites installation guide and make the appropriate selections for your system. 
 
 Finally, download PCWebsite project files from github as zip.
-unzip into your desired workspace environment. 
+Unzip into your desired workspace environment. 
 Open folder in visual studio code.
 Open app.js
 Open new terminal window
 Enter the following to kick off the server and website requests:
 node app.js
 
-when you see the following: 
+When you see the following: 
 'Server Listening on port:3000' 
 displayed in the terminal window. That means success.
 
@@ -67,13 +84,13 @@ Select the test you wish to run
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 TroubleShooting Steps:
-if terminal window says a message like error at require('express') then
+If terminal window says a message like error at require('express') then
 execute the following: 
     npm init // you only need to call this once before all your npm install calls
     npm install express --save   
 to install the ‘express’ module
 
-execute the following for similar errors: 
+Execute the following for similar errors: 
 npm install body-parser --save   //to install ‘body-parser’ module
 
 npm install helmet --save //to install ‘helmet’ module.
