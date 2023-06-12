@@ -135,12 +135,16 @@ app.post('/view', function(req,res){
 // post(/insert) is the action this code is listening for when 
 // our html page hits the submit button. Then does some action.
 app.post('/insert',[
-    // Check and validate input is Alphabetic and allows whitespaces \s and dashes \-.
     // trim() removes extra whitespaces at the beginning and end of what was entered.
     // escape() function computes a new string in which certain characters have been 
     // replaced by hexadecimal escape sequences such as html tags 
     check('first_name').isAlpha('en-US', {ignore: '\s\-'}).trim().escape(),
-    check('last_name').isAlpha('en-US', {ignore: '\s\-'}).trim().escape()
+    check('last_name').isAlpha('en-US', {ignore: '\s\-'}).trim().escape(),
+    check('email').isAlphanumeric('en-US', {ignore: '\-\.\_\@\~\+'}).isEmail().normalizeEmail().trim().escape(),
+    check('phone_number').isMobilePhone('en-US', {errorMessage: 'Must provide a valid US phone number.'} ).trim().escape(),
+    check('age').optional({checkFalsy: false}).isNumeric().trim().escape(),
+    check('address').optional({checkFalsy: true}).isAlphanumeric('en-US', {ignore: '\&\-\#\,\:\;\'\/\()\ \.\_\+\~'}).trim().escape(),
+    check('other_contact_details').optional({checkFalsy: true}).isAlphanumeric('en-US', {ignore: '\&\-\#\,\:\;\'\/\()\ \.\_\+\~'}).trim().escape()
   ], function(req,res){
     // capture our validationResult from the request - req received after checking and validating the inputs received.
     err = validationResult(req);
@@ -162,19 +166,34 @@ app.post('/insert',[
     // proceed to creating our queryMessage string to pass to our client database connection object. 
     // here we are going to insert a new student into our database. 
     else {
-      queryMessage = "INSERT INTO Students (First_Name,Last_Name) VALUES ('"+req.body.first_name+"','"+req.body.last_name+"');";
+      queryMessage = "INSERT INTO Students (first_name,last_name,email,phone_number, age, address, other_contact_details) VALUES ('"
+      +req.body.first_name+"','"+req.body.last_name+"','"+req.body.email+"','"+req.body.phone_number+"',"+req.body.age+",'"+req.body.address+"','"+req.body.other_contact_details+"');";
       //console.log(queryMessage);
       client.query(queryMessage)
       //.then(() => console.log("New student has been added!"))
       // once query is executed succesfully we create our rsMessage to send back to our customer or user 
       // to let them know they have successfully inserted a new record.
       .then(() => {
-        rsMessage = "New student has been added into the database with First Name = "+req.body.first_name+ " and Last Name = "+req.body.last_name;
+        rsMessage = "New student has been added into the database with "
+        + "<br>First Name: " + req.body.first_name 
+        + "<br>Last Name: " + req.body.last_name 
+        + "<br>Email: " + req.body.email 
+        + "<br>Phone Number: " + req.body.phone_number 
+        + "<br>Age: " + req.body.age 
+        + "<br>Address: " + req.body.address
+        + "<br>Other Contact Details: " + req.body.other_contact_details;
         rsMessage = rsMessage + '<br><br><a class="back" href="http://localhost:3000/"><input type="button" value="Back"/></a>';
-        res.send(rsMessage)
+        res.send(rsMessage);
       })
-        // catch any e - errors and print out to our terminal window. 
-        .catch(e => console.log(e))
+        // catch any err - errors and print out to our terminal window. 
+        .catch(err => {
+          console.log(queryMessage);
+          console.log(err);
+          rsMessage = "Please make sure the following required fields have something entered: ";
+          rsMessage = rsMessage + '<br><br><a class="back" href="http://localhost:3000/"><input type="button" value="Back"/></a>';
+          res.send(rsMessage);        
+        });
+        
       }
 });
 
@@ -242,7 +261,7 @@ app.post('/update',[
     // replaced by hexadecimal escape sequences such as html tags 
     check('first_name').optional({checkFalsy: true}).isAlpha('en-US', {ignore: '\s\-'}).trim().escape(),
     check('last_name').optional({checkFalsy: true}).isAlpha('en-US', {ignore: '\s\-'}).trim().escape(),
-
+    check('phone_number').optional({checkFalsy: true}).isMobilePhone('en-US', {errorMessage: 'Must provide a valid US phone number.'} ).trim().escape(),
     // For email we are allowing alphanumeric and the following characters inside single quotes but escaped \ : '- . _ @ ~ +'
     // Then checking if its a valid email format something@email.com and normalize it to email format if it can.
     // I.E. Normalize the email address by lowercasing the domain part of it... @SomeDomain.CoM to @somedomain.com
@@ -251,9 +270,11 @@ app.post('/update',[
     // Check and validate that age is numeric then trim and escape it which might be mostly unnecessary but who knows maybe it is. Hackers find ways. 
     check('age').optional({checkFalsy: true}).isNumeric().trim().escape(),
 
+    check('address').optional({checkFalsy: true}).isAlphanumeric('en-US', {ignore: '\s\t\n\-\.\_\@\~\+\#\:\;\'\"\!\&\(\)\{\}\[\]\,'}).trim().escape(),
+
     // Check and validate that contact details is only using allowed characters and is alphaNumeric. 
     // allowed characters: spaces  tabs '	' newlines ' ' - . _ @ ~ + # : ; '  " ! & ( ) { } [ ] , qwertyuiopasdfghjklzxcvbnm1234567890QWERTYUIOPASDFGHJKLZXCVBNM
-    check('contact_details').optional({checkFalsy: true}).isAlphanumeric('en-US', {ignore: '\s\t\n\-\.\_\@\~\+\#\:\;\'\"\!\&\(\)\{\}\[\]\,'}).trim().escape()
+    check('other_contact_details').optional({checkFalsy: true}).isAlphanumeric('en-US', {ignore: '\s\t\n\-\.\_\@\~\+\#\:\;\'\"\!\&\(\)\{\}\[\]\,'}).trim().escape()
   ], function(req,res){ 
     
     // capture our validationResult from the request - req received after checking and validating the inputs received.
@@ -293,7 +314,7 @@ app.post('/update',[
         // column2 = value2,
         // etc ... 
         // continues as needed.        
-        sqlQuery ="UPDATE Students SET";
+        sqlQuery = "UPDATE Students SET";
 
         // if not empty concatenate the field to be updated with the appropriate comma
         if (req.body.first_name != '')
@@ -325,6 +346,19 @@ app.post('/update',[
           // then concatenate the new field we will include in the update.
           sqlQuery = sqlQuery + " email = '"+req.body.email+"'"; 
         } 
+        if (req.body.phone_number != '') 
+        {
+          // check to see if there was a previous field being updated
+          // only one of them needs to return true to know we need a comma added.
+          // if true add a comma at the end of the current sqlQuery
+          if(sqlQuery.includes('First_Name = ')) {sqlQuery = sqlQuery + ",";}
+          else if(sqlQuery.includes('last_name = ')) {sqlQuery = sqlQuery + ",";}
+          else if(sqlQuery.includes('email = ')) {sqlQuery = sqlQuery + ",";}
+          else {} // do nothing. do not add a comma as this is the only field so far that will need to be updated.
+          // then concatenate the new field we will include in the update.
+          sqlQuery = sqlQuery + " phone_number = '"+req.body.phone_number+"'"; 
+        } 
+
         // if not empty concatenate the field to be updated with the appropriate comma
         if (req.body.age != '') 
         {
@@ -334,6 +368,7 @@ app.post('/update',[
           if(sqlQuery.includes('First_Name = ')) {sqlQuery = sqlQuery + ",";}
           else if(sqlQuery.includes('last_name = ')) {sqlQuery = sqlQuery + ",";}
           else if(sqlQuery.includes('email = ')) {sqlQuery = sqlQuery + ",";}
+          else if(sqlQuery.includes('phone_number = ')) {sqlQuery = sqlQuery + ",";}
           else {} // do nothing. do not add a comma as this is the only field so far that will need to be updated.
           // check age is numeric and between 0 and 201.
           if (req.body.age >= 0 && req.body.age < 201) 
@@ -341,9 +376,9 @@ app.post('/update',[
             // then concatenate the new field we will include in the update.
             sqlQuery = sqlQuery + " age = "+req.body.age+""; 
           } else {sqlQuery = sqlQuery + " age = 0";} // else set the age to = 0 as default. 
-        } 
+        }
         // if not empty concatenate the field to be updated with the appropriate comma
-        if (req.body.contact_details != '')  
+        if (req.body.address != '')  
         {
           // check to see if there was a previous field being updated
           // only one of them needs to return true to know we need a comma added.
@@ -351,19 +386,40 @@ app.post('/update',[
           if(sqlQuery.includes('First_Name = ')) {sqlQuery = sqlQuery + ",";}
           else if(sqlQuery.includes('last_name = ')) {sqlQuery = sqlQuery + ",";}
           else if(sqlQuery.includes('email = ')) {sqlQuery = sqlQuery + ",";}
+          else if(sqlQuery.includes('phone_number = ')) {sqlQuery = sqlQuery + ",";}
           else if(sqlQuery.includes('age = ')) {sqlQuery = sqlQuery + ",";}
+          else if(sqlQuery.includes('address = ')) {sqlQuery = sqlQuery + ",";}
           else {}// do nothing. do not add a comma as this is the only field so far that will need to be updated.
           // then concatenate the new field we will include in the update.
-          sqlQuery = sqlQuery + " contact_details = '"+req.body.contact_details+"'"; 
+          sqlQuery = sqlQuery + " address = '"+req.body.address+"'"; 
         } 
+        // if not empty concatenate the field to be updated with the appropriate comma
+        if (req.body.other_contact_details != '')  
+        {
+          // check to see if there was a previous field being updated
+          // only one of them needs to return true to know we need a comma added.
+          // if true add a comma at the end of the current sqlQuery
+          if(sqlQuery.includes('First_Name = ')) {sqlQuery = sqlQuery + ",";}
+          else if(sqlQuery.includes('last_name = ')) {sqlQuery = sqlQuery + ",";}
+          else if(sqlQuery.includes('email = ')) {sqlQuery = sqlQuery + ",";}
+          else if(sqlQuery.includes('phone_number = ')) {sqlQuery = sqlQuery + ",";}
+          else if(sqlQuery.includes('age = ')) {sqlQuery = sqlQuery + ",";}
+          else if(sqlQuery.includes('address = ')) {sqlQuery = sqlQuery + ",";}
+          else {}// do nothing. do not add a comma as this is the only field so far that will need to be updated.
+          // then concatenate the new field we will include in the update.
+          sqlQuery = sqlQuery + " other_contact_details = '"+req.body.other_contact_details+"'"; 
+        } 
+        
         // if all fields are empty then create appropriate message to return to our customer or user.
         if 
         (
           req.body.first_name == '' &&
           req.body.last_name == '' &&
           req.body.email == '' &&
+          req.body.phone_number == '' &&
           req.body.age == '' &&
-          req.body.contact_details == ''
+          req.body.address == '' &&
+          req.body.other_contact_details == ''
         ) 
         { // create message to our customer or user to let them know they did not include anything to update. 
           rsMessage = "<h2>Nothing was inputed to update...</h2>";

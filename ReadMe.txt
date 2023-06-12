@@ -37,6 +37,22 @@ Make sure to use the following values during install:
     password: "PCWebsite",
     database: "testdb"  
 
+After successful install of PostgreSQL. Open your programs list. 
+Navigate to PostgreSQL 15 > pgAdmin 4 > When prompted for password enter PCWebsite 
+Select drop down arrow on servers. When prompted for passwords again enter PCWebsite.
+Select drop down arrow on databases. Select drop down on testdb. 
+Select drop down on schemas. Select drop down on tables. 
+Select students table. Right click students table. Select query tool.
+Go back to Visual Studio Code. Go into project folder PCWebsite then into PostgreSQL folder.
+Open Create_Script_Students_Table.sql. ctrl-a to select all and ctrl-c to copy.
+Go back to pg Admin 4 window. ctrl-v to paste into the query window. Press F5 to execute. 
+You should see something similar to the following: 
+    
+    ALTER/CREATE TABLE
+
+    Query returned successfully in 1 secs 171 msec.
+
+
 Cypress - Download Link for windows - https://docs.cypress.io/guides/getting-started/installing-cypress
 and follow the websites installation guide and make the appropriate selections for your system. 
 
